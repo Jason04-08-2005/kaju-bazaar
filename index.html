@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KAJU BAZAAR | Luxury Wholesale Cashew Stock & Bulk Order Management</title>
+  <meta name="description" content="India's premier luxury cashew trading house. Direct bulk procurement, verified vendor stock, daily stateless availability, and coordinator-managed allocation." />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%230B2218' stroke='%23C9A646' stroke-width='4'/><text x='50%' y='58%' font-family='Georgia,serif' font-size='38' font-weight='bold' fill='%23E2C66D' text-anchor='middle'>KB</text></svg>" />
+
+  <!-- Google Fonts: Luxury Serif & Modern Monospace/Business -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Bespoke Luxury Stylesheet -->
+  <link rel="stylesheet" href="assets/css/luxury.css" />
+</head>
+<body>
+
+  <!-- =========================================================================
+       GODOWN ENTRY VIDEO: 3.8s CONTINUOUS VIDEO WITH CLIMACTIC NAMASTE FINALE
+       Shows opening bulk cashew wooden box -> pouring cashews onto velvet -> Namaste
+       Then docks seamlessly behind the Intro / Hero screen
+       ========================================================================= -->
+  <div id="godown-cinema-stage" class="cinema-stage cinema-fullscreen">
+    <div class="cinema-video-wrapper">
+      <video id="godown-video" class="cinema-video" autoplay muted playsinline preload="auto">
+        <source src="assets/videos/godown_cashew_entry.mp4" type="video/mp4" />
+        <source src="assets/videos/godown_cashew_entry.webm" type="video/webm" />
+      </video>
+      <div class="cinema-frame-overlay"></div>
+    </div>
+
+    <!-- Header Controls -->
+    <div class="cinema-controls">
+      <div class="cinema-brand">
+        <div class="cinema-crest">KB</div>
+        <div>
+          <div style="font-size: 0.95rem; font-weight: 700; color: #fff;">KAJU BAZAAR</div>
+        </div>
+      </div>
+
+      <div class="cinema-actions">
+        <button id="cinema-sound-btn" class="cinema-btn" onclick="CashewCinema.toggleAudio()">
+          🔈 Sound: OFF
+        </button>
+        <button id="cinema-skip-btn" class="cinema-btn" onclick="CashewCinema.skip()">
+          Skip Intro →
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Badge -->
+    <div class="cinema-badge-container">
+      <div id="cinema-badge-text" class="cinema-badge">
+        CENTRAL GODOWN • BULK WOODEN BOX OPENING
+      </div>
+    </div>
+
+    <!-- Progress Timeline Bar (3.8 seconds) -->
+    <div class="cinema-progress-bar">
+      <div id="cinema-progress-fill" class="cinema-progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Dynamic Application Root Container -->
+  <div id="app-root"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- =========================================================================
+       MODAL 1: REQUEST WHOLESALE BULK QUANTITY (NOT A RETAIL CART!)
+       ========================================================================= -->
+  <div id="modal-bulk-inquiry" class="modal-backdrop">
+    <div class="modal-dialog">
+      <button class="modal-close-btn" onclick="CashewApp.closeModal('modal-bulk-inquiry')">&times;</button>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <div class="section-label" style="font-size: 0.72rem;">WHOLESALE PROCUREMENT INQUIRY</div>
+        <h3 style="font-family: var(--font-serif); font-size: 1.7rem; color: #fff;">
+          Request Bulk Cashew Allocation
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--cream-muted);">
+          Submit your required multi-ton quantity directly to our Chief Coordinator. All commercial wholesale contracts are verified verbally and backed by certified godown stock.
+        </p>
+      </div>
+
+      <form onsubmit="CashewApp.handleBulkInquirySubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Buyer Business / Company Name</label>
+          <input type="text" name="buyer_company" required class="form-input" placeholder="e.g. Royal Confectioners Pvt Ltd" />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Authorized Representative</label>
+            <input type="text" name="buyer_name" required class="form-input" placeholder="Full Name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Direct Phone Number</label>
+            <input type="tel" name="buyer_phone" required class="form-input" placeholder="+91 98XXX XXXXX" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Select Cashew Variety</label>
+            <select name="variety_id" id="inquiry-variety-select" class="form-select">
+              <option value="1">W210 (King Jumbo)</option>
+              <option value="2">W240 (Premium Jumbo)</option>
+              <option value="3" selected>W320 (Global Benchmark)</option>
+              <option value="4">W400 (Medium Wholes)</option>
+              <option value="5">W450 (Compact Wholes)</option>
+              <option value="6">SW320 (Scorched Wholes)</option>
+              <option value="7">JH (Jumbo Halves)</option>
+              <option value="8">Broken Cashew (Pieces)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Quantity Required (Tons)</label>
+            <input type="number" step="1" min="5" name="requested_quantity" required class="form-input" value="50" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Destination Facility / Godown City</label>
+          <input type="text" name="destination" required class="form-input" placeholder="e.g. Bhiwandi Logistics Park, Mumbai" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Special Trade Requirements / Packaging</label>
+          <textarea name="notes" rows="2" class="form-textarea" placeholder="e.g. Vacuum-nitrogen tin packing requested, export container delivery"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.75rem;">
+          <button type="button" class="btn-outline-gold" onclick="CashewApp.closeModal('modal-bulk-inquiry')">Cancel</button>
+          <button type="submit" class="btn-gold">Submit Wholesale Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: DIRECT COORDINATOR HOTLINE (SECTION 13)
+       ========================================================================= -->
+  <div id="modal-coordinator-contact" class="modal-backdrop">
+    <div class="modal-dialog" style="text-align: center;">
+      <button class="modal-close-btn" onclick="CashewApp.closeModal('modal-coordinator-contact')">&times;</button>
+      
+      <div style="width: 75px; height: 75px; border-radius: 50%; border: 2px solid var(--gold-400); margin: 0 auto 1.25rem; overflow: hidden;">
+        <img src="assets/images/cashew_coordinator_interaction.jpg" alt="Trading Coordinator" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+
+      <div class="section-label" style="justify-content: center; font-size: 0.75rem;">CHIEF TRADING COORDINATOR</div>
+      <h3 style="font-family: var(--font-serif); font-size: 1.75rem; color: #fff; margin-bottom: 0.35rem;">
+        Vikramaditya Rao
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--gold-300); margin-bottom: 1.5rem;">
+        Central Cashew Trading Hub • Mangalore Port Terminal
+      </p>
+
+      <div style="background: rgba(6, 20, 14, 0.7); border: 1px solid rgba(212, 176, 85, 0.3); border-radius: 10px; padding: 1.5rem; margin-bottom: 2rem; text-align: left;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.88rem;">
+          <span style="color: var(--cream-muted);">Direct Telephone:</span>
+          <strong style="color: #fff;">+91 98450 82190</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.88rem;">
+          <span style="color: var(--cream-muted);">Wholesale Hours:</span>
+          <strong style="color: var(--gold-300);">08:00 AM – 07:00 PM IST</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.88rem;">
+          <span style="color: var(--cream-muted);">Bonded Storage:</span>
+          <strong style="color: #fff;">Kollam, Mangalore, Panaji</strong>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+        <a href="tel:+919845082190" class="btn-gold" style="width: 100%; font-size: 0.95rem; padding: 1rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Coordinator Now (+91 98450 82190)
+        </a>
+        <button class="btn-outline-gold" onclick="CashewApp.closeModal('modal-coordinator-contact')">
+          Close Window
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: STOCK LOCK MECHANISM (SECTION 17)
+       ========================================================================= -->
+  <div id="modal-stock-lock" class="modal-backdrop">
+    <div class="modal-dialog">
+      <button class="modal-close-btn" onclick="CashewApp.closeModal('modal-stock-lock')">&times;</button>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <div class="section-label" style="font-size: 0.72rem;">COORDINATOR ALLOCATION CONTROL</div>
+        <h3 style="font-family: var(--font-serif); font-size: 1.7rem; color: #fff;">
+          Lock Vendor Stock
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--cream-muted);">
+          Manually lock agreed bulk quantity following verbal telephone confirmation. Original available quantity and locked quantity are preserved separately.
+        </p>
+      </div>
+
+      <div style="background: rgba(6, 20, 14, 0.7); border: 1px solid rgba(212, 176, 85, 0.25); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.88rem;">
+          <span style="color: var(--cream-muted);">Vendor:</span>
+          <strong id="lock-vendor-name" style="color: #fff;">ABC Cashews</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.88rem;">
+          <span style="color: var(--cream-muted);">Total Declared Stock Today:</span>
+          <strong id="lock-available-tons" style="color: var(--gold-300);">120 Tons</strong>
+        </div>
+      </div>
+
+      <form onsubmit="CashewApp.handleStockLockSubmit(event)">
+        <input type="hidden" name="vendor_id" id="lock-vendor-id" value="1" />
+
+        <div class="form-group">
+          <label class="form-label">Target Cashew Variety</label>
+          <select name="variety_id" class="form-select">
+            <option value="1">W210 (King Jumbo)</option>
+            <option value="2">W240 (Premium Jumbo)</option>
+            <option value="3" selected>W320 (Standard Wholes)</option>
+            <option value="4">W400 (Medium Wholes)</option>
+            <option value="5">W450 (Compact Wholes)</option>
+            <option value="6">SW320 (Scorched Wholes)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Enter Agreed Quantity to Lock (Tons)</label>
+          <input type="number" step="0.5" min="1" max="500" name="locked_quantity" required class="form-input" placeholder="e.g. 100 Tons" value="40" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Verbal Confirmation / Justification Reason</label>
+          <input type="text" name="reason" required class="form-input" value="Verbal confirmation via phone call" />
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.75rem;">
+          <button type="button" class="btn-outline-gold" onclick="CashewApp.closeModal('modal-stock-lock')">Cancel</button>
+          <button type="submit" class="btn-gold">Confirm Lock</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 4: VENDOR ONBOARDING / PROFILE COMPLETION (SECTION 2)
+       ========================================================================= -->
+  <div id="modal-vendor-onboarding" class="modal-backdrop">
+    <div class="modal-dialog">
+      <button class="modal-close-btn" onclick="CashewApp.closeModal('modal-vendor-onboarding')">&times;</button>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <div class="section-label" style="font-size: 0.72rem;">GOOGLE AUTHENTICATED • STEP 2</div>
+        <h3 style="font-family: var(--font-serif); font-size: 1.7rem; color: #fff;">
+          Vendor Profile Completion
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--cream-muted);">
+          Complete your wholesale business registration. Your account will undergo coordinator review before daily stock entry is unlocked.
+        </p>
+      </div>
+
+      <form onsubmit="CashewApp.handleVendorOnboardingSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Vendor / Registered Business Name</label>
+          <input type="text" name="business_name" required class="form-input" placeholder="e.g. Konkan Gold Cashew Processors" value="Goa Royale Cashew Works" />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Contact Person Name</label>
+            <input type="text" name="vendor_name" required class="form-input" placeholder="Full Name" value="Girish Kamat" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number (For Verbal Verification)</label>
+            <input type="tel" name="phone" required class="form-input" placeholder="+91 98XXX XXXXX" value="+91 98223 99010" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">GST Number (15 Digits)</label>
+            <input type="text" name="gst_number" required class="form-input" placeholder="30AAACG1122U1ZK" value="30AAACG1122U1ZK" style="text-transform: uppercase;" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Business Location / APMC</label>
+            <input type="text" name="location" required class="form-input" placeholder="e.g. Ponda, Goa" value="Ponda, Goa" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Physical Processing Godown Address</label>
+          <textarea name="address" rows="2" required class="form-textarea" placeholder="Full street address and pin code">Plot 45, Kundaim Industrial Estate, Ponda, Goa - 403115</textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.75rem;">
+          <button type="button" class="btn-outline-gold" onclick="CashewApp.closeModal('modal-vendor-onboarding')">Cancel</button>
+          <button type="submit" class="btn-gold">Submit For Approval</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules in Strict Dependency Order -->
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/cinema.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
